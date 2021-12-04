@@ -1,6 +1,6 @@
-const GMailSendAddressChecker = {
+const GmailSendChecker = {
 
-	VERSION : "version 0.23.2",
+	VERSION : "version 0.0.1",
 
 	// アトリビュート
 	CONFIRM_BUTTON_ATTR : "gmsac-confirm",
@@ -20,61 +20,6 @@ const GMailSendAddressChecker = {
 	CHECK_WINDOW_ID : "gmsac-check-window",
 	CHECK_OK_BUTTON_ID : "gmsac-check-ok",
 	CHECK_BOX_ID : "gmsac-checkbox-",
-
-
-	// 表示文字
-	display_text_tbl : {
-		"ja": {	//日本語
-			"confirm": "確認",
-			"checkall": "すべてチェックしてください",
-			"subject": "件名",
-			"attached": "添付",
-			"noattach": "添付ファイルなし",
-		},
-		"en": {	//English 
-			"confirm": "Confirm",
-			"checkall": "",
-			"subject": "Subject",
-			"attached": "Attached",
-			"noattach": "No attachment",
-		},
-		"zh-TW": {	//中文 (繁體)
-			"confirm": "確認",
-			"checkall": "請檢查所有",
-			"subject": "主旨",
-			"attached": "Attached",
-			"noattach": "No attachment",
-		},
-		"ko": {	//한국어
-			"confirm": "확인",
-			"checkall": "모두 확인하십시오",
-			"subject": "제목",
-			"attached": "Attached",
-			"noattach": "No attachment",
-		},
-		"vi": {	//Tiếng Việt
-			"confirm": "Xác nhận",
-			"checkall": "Vui lòng kiểm tra tất cả",
-			"subject": "Chủ đề",
-			"attached": "Attached",
-			"noattach": "No attachment",
-		},
-		"zh-CN": {	//中文 (简体)
-			"confirm": "确认",
-			"checkall": "请检查所有",
-			"subject": "主题",
-			"attached": "Attached",
-			"noattach": "No attachment",
-		},
-		"de": {	//Deutsch
-			"confirm": "Bestätigen",
-			"checkall": "Bitte überprüfen Sie alle",
-			"subject": "Betreff",
-			"attached": "Attached",
-			"noattach": "No attachment",
-		},
-	},
-
 
 	//-------------------------------------------------------
 	// 初期化(GMailページがロードされた際に呼び出す）
@@ -288,12 +233,8 @@ const GMailSendAddressChecker = {
 	//-------------------------------------------------------
 	createCheckModalWindow(id) {
 
-		const window_element = this.createModalWindowsOuter();
-		window_element.innerHTML = this.createWindowHtml(id);
 		window_element.appendChild(this.crateCheckOkCancelButton(id));		// OK,CANCELボタン
 		
-		const element = this.createModalBack();
-		element.appendChild(window_element);
 		element.id = this.CHECK_WINDOW_ID;
 
 		//チェックボックスのイベント
@@ -326,58 +267,6 @@ const GMailSendAddressChecker = {
 		return element;
 	},
 
-	//チェック用モーダルウィンドウ削除
-	removeCheckModalWindow() {
-		const element = document.getElementById(this.CHECK_WINDOW_ID);
-		if (element) {
-			element.parentNode.removeChild(element); 
-		}
-	},
-
-
-	//モーダルウィンドウ外の全面背景
-	createModalBack() {
-		let element = document.createElement("div");
-		return element;
-	},
-
-	//ウィンドウ外形
-	createModalWindowsOuter() {
-		let element = document.createElement("div");
-		element.className = "window_outer";
-		return element;
-	},
-
-
-	// ウィンドウ内HTML
-	createWindowHtml(id) {
-		let edit_node = document.querySelector(`*[${this.EDIT_NODE_ATTR}="${id}"]`);
-		const from = this.getFrom(edit_node);
-		const whiteDomain = this.getDomain(from);
-		//ヘッダー
-		let html = 
-		'<div class="gmsac-header">' +
-		'<div class="gmsac-title">' + this.getDisplayText("checkall") + '</div>' +
-		'<div class="gmsac-version">' + this.VERSION + ' EB' + '</div>' +
-		'</div>';
-		
-		//チェック領域
-		html += 
-		'<div class="gmsac-check-area">' +
-		'<table>' +
-		'<tr><td>From</td><td>' + this.createCheckbox(from) + '</td></tr>' +
-		'<tr><td>To</td><td>' + this.makeAddressList(edit_node.querySelectorAll('input[name=to]'), whiteDomain) + '</td></tr>' +
-		'<tr><td>Cc</td><td>' +	this.makeAddressList(edit_node.querySelectorAll('input[name=cc]'), whiteDomain) + '</td></tr>' +
-		'<tr><td>Bcc</td><td>' + this.makeAddressList(edit_node.querySelectorAll('input[name=bcc]'), whiteDomain) + '</td></tr>' +
-		'<tr><td>' + this.getDisplayText("subject") + '</td><td>' +	this.makeAddressList(edit_node.querySelectorAll('input[name=subject]'), "") + '</td></tr>' +
-		'<tr><td>' + this.getDisplayText("attached") + '</td><td>' + this.getAttachedFiles(edit_node) + '</td></tr>' +
-		'</table>' +
-		'</div>';
-
-		return html;		
-	},
-
-
 	// OK,CANCELボタン
 	crateCheckOkCancelButton(id) {
 		let ok = document.createElement("input");
@@ -404,21 +293,6 @@ const GMailSendAddressChecker = {
 
 		return element;
 	},
-
-	// チェックボックス作成
-	createCheckbox(value) {
-		const id = `${this.CHECK_BOX_ID}${this.check_box_id_counter}`;
-
-		let html = `<label>`
-		+ `<input type="checkbox" class="gmsac-checkbox-input"></input>`
-		+ `<span class="gmsac-checkbox-parts" >${value}</span>`
-		+ `</label>`;
-
-		this.check_box_id_counter ++;
-
-		return html;
-	},
-	check_box_id_counter: 0,
 
 
 	// from取得
@@ -466,48 +340,11 @@ const GMailSendAddressChecker = {
 		return list;
 	},
 
-	// 添付ファイル名取得
-	getAttachedFiles(edit_node) {
-		//<div class="dL" tabindex="-1" id=":eu" aria-label="添付ファイル GMailSendAdressCheckerSS.png。添付ファイルを表示するには Enter キーを、削除するには Delete キーを押してください">
-		// <input id=":em" name="attach" type="hidden" value="14d415a088af6894_14d415a088af6894_0.2_-1" checked="">
-		// <a class="dO" id=":en" href="?ui=2&amp;ik=0187644934&amp;view=att&amp;th=14d415a088af6894&amp;attid=0.2&amp;disp=safe&amp;realattid=f_i9jfa7u21&amp;zw" target="_blank">
-		//  <div class="vI">GMailSendAdressCheckerSS.png</div>
-		//  <div class="vJ">（39 KB）</div>
-		// </a>
-		// <div id=":ek" role="button" class="vq" tabindex="-1">
-		//</div>
-		// こんな感じなので、<input name="attach">直後の<a>タグの直下の２つのDIVからファイル名とサイズを取得
-
-		let attachedFiles = "";
-
-		const el = edit_node.querySelectorAll('input[name=attach]+a');
-
-		const el_len = el.length;
-		if (el_len > 0) {
-			for (let i = 0; i < el.length; i++) {
-
-				const el_div = el[i].querySelectorAll('div');
-
-				attachedFiles = attachedFiles + this.createCheckbox(el_div[0].innerText + el_div[1].innerText) + '<br/>';
-			}
-		} else {
-			attachedFiles = this.createCheckbox(" - " + this.getDisplayText("noattach") + " - ");
-		}
-
-		return attachedFiles;
-	},
-
-
 
 
 };
 
 
-
-
 // 起動
-console.log("GMail SendAddress Checker init");
-GMailSendAddressChecker.init();
-// 言語コード確認
-console.log(`html lang = ${document.documentElement.lang}`);
-console.log(`chrome lang = ${chrome.i18n.getUILanguage()}`);
+console.log("GGmailSendChecker init");
+GmailSendChecker.init();
