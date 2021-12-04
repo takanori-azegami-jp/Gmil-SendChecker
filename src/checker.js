@@ -1,350 +1,339 @@
-const GmailSendChecker = {
+window.alert('Gmail開いたね！');
 
-	VERSION : "version 0.0.1",
+// const GmailSendChecker = {
 
-	// アトリビュート
-	CONFIRM_BUTTON_ATTR : "gmsac-confirm",
-	CONFIRM_BUTTON_STYLE : {
-		backgroundColor: 	'#417fcf',
-		minWidth: 		'80px',
-		borderRadius: 		'4px'
-	},
+// 	VERSION : "version 0.1",
 
-	SEND_BUTTON_ATTR : "gmsac-send",
-	SEND_BUTTON_STYLE : {
-		backgroundColor:	'#1a73e8',
-		color:			'#ffffff',
-	},
+// 	EDIT_NODE_ATTR : "gmsac-edit-node",
+// 	CHECK_WINDOW_ID : "gmsac-check-window",
+// 	CHECK_OK_BUTTON_ID : "gmsac-check-ok",
+// 	CHECK_BOX_ID : "gmsac-checkbox-",
 
-	EDIT_NODE_ATTR : "gmsac-edit-node",
-	CHECK_WINDOW_ID : "gmsac-check-window",
-	CHECK_OK_BUTTON_ID : "gmsac-check-ok",
-	CHECK_BOX_ID : "gmsac-checkbox-",
+// 	//-------------------------------------------------------
+// 	// 初期化(GMailページがロードされた際に呼び出す）
+// 	//-------------------------------------------------------
+// 	init() {
+// 		// 確認ID 初期化
+// 		this.confirm_id = 0;
 
-	//-------------------------------------------------------
-	// 初期化(GMailページがロードされた際に呼び出す）
-	//-------------------------------------------------------
-	init() {
-		// 確認ID 初期化
-		this.confirm_id = 0;
+// 		// focusイベント追加
+// 		this.addFocusEventListener();
 
-		// focusイベント追加
-		this.addFocusEventListener();
+// 		// Ctrl+Enter無効化
+// 		this.diasbleCtrlEnter();
+// 	},
 
-		// Ctrl+Enter無効化
-		this.diasbleCtrlEnter();
-	},
-
-	// focusイベント追加
-	addFocusEventListener() {
-		document.addEventListener('focus', (event) => {
-			const target = event.target;
-			if (target.name == 'to' 
-			|| target.name == 'cc' 
-			|| target.name == 'bcc' 
-			|| target.name == 'subjectbox' 
-			|| target.getAttribute('role') == "textbox") {
+// 	// focusイベント追加
+// 	addFocusEventListener() {
+// 		document.addEventListener('focus', (event) => {
+// 			const target = event.target;
+// 			if (target.name == 'to' 
+// 			|| target.name == 'cc' 
+// 			|| target.name == 'bcc' 
+// 			|| target.name == 'subjectbox' 
+// 			|| target.getAttribute('role') == "textbox") {
 				
-				// すべてのメール作成フォームの「送信」関連ボタンを「確認」ボタンに変更
-				this.changeAllButtonSendToConfirm();
+// 				// すべてのメール作成フォームの「送信」関連ボタンを「確認」ボタンに変更
+// 				this.changeAllButtonSendToConfirm();
 
-			}
-		}, true);
-	},
+// 			}
+// 		}, true);
+// 	},
 
-	// Ctrl+Enter無効化
-	diasbleCtrlEnter() {
-		document.addEventListener('keydown', (event) => {
-			if (event.key == 'Enter' && (event.ctrlKey || event.metaKey)) {
-				console.log("keydown ctrl+Enter");
-				console.log(event.target);
-				event.stopPropagation(); //イベントの伝搬を止める
-			}
-		}, true);
-	},
+// 	// Ctrl+Enter無効化
+// 	diasbleCtrlEnter() {
+// 		document.addEventListener('keydown', (event) => {
+// 			if (event.key == 'Enter' && (event.ctrlKey || event.metaKey)) {
+// 				console.log("keydown ctrl+Enter");
+// 				console.log(event.target);
+// 				event.stopPropagation(); //イベントの伝搬を止める
+// 			}
+// 		}, true);
+// 	},
 
-	//-------------------------------------------------------
-	// すべてのメール作成フォームの「送信」関連ボタンを「確認」ボタンに変更
-	//-------------------------------------------------------
-	changeAllButtonSendToConfirm() {
-		// すべてのメール作成ノードを取得
-		const edit_nodes = this.findEditNodeAll();
+// 	//-------------------------------------------------------
+// 	// すべてのメール作成フォームの「送信」関連ボタンを「確認」ボタンに変更
+// 	//-------------------------------------------------------
+// 	changeAllButtonSendToConfirm() {
+// 		// すべてのメール作成ノードを取得
+// 		const edit_nodes = this.findEditNodeAll();
 
-		for (const node of edit_nodes) {
-			//確認ID取得
-			let id = node.getAttribute(this.EDIT_NODE_ATTR);
-			if (!id) {
-				id = this.confirm_id;
-				this.confirm_id ++;
-			}
-			node.setAttribute(this.EDIT_NODE_ATTR, id);
+// 		for (const node of edit_nodes) {
+// 			//確認ID取得
+// 			let id = node.getAttribute(this.EDIT_NODE_ATTR);
+// 			if (!id) {
+// 				id = this.confirm_id;
+// 				this.confirm_id ++;
+// 			}
+// 			node.setAttribute(this.EDIT_NODE_ATTR, id);
 			
-			//すでに確認ボタンがあれば処理しない
-			if (!this.findConfirmButton(node)) {
+// 			//すでに確認ボタンがあれば処理しない
+// 			if (!this.findConfirmButton(node)) {
 
-				// 送信ボタンを探す
-				const send_button = this.findSendButton(node);
-				if (send_button) {
-					// htmlタグのlangから言語コード取得
-					this.lang = document.documentElement.lang;
+// 				// 送信ボタンを探す
+// 				const send_button = this.findSendButton(node);
+// 				if (send_button) {
+// 					// htmlタグのlangから言語コード取得
+// 					this.lang = document.documentElement.lang;
 
-					// 確認ボタンを追加する
-					this.insertConfirmButton(send_button, id);
+// 					// 確認ボタンを追加する
+// 					this.insertConfirmButton(send_button, id);
 
-					// 送信ボタンを非表示にする
-					this.hideSendButton(send_button, id);
+// 					// 送信ボタンを非表示にする
+// 					this.hideSendButton(send_button, id);
 
-				}
-			}
-		}
-	},
+// 				}
+// 			}
+// 		}
+// 	},
 
-	// すべてのメール作成ノードを取得
-	findEditNodeAll() {
-		// formを取得
-		const form_nodes = document.querySelectorAll('td form[method=POST]');
+// 	// すべてのメール作成ノードを取得
+// 	findEditNodeAll() {
+// 		// formを取得
+// 		const form_nodes = document.querySelectorAll('td form[method=POST]');
 
-		// 見つけたformノードの親階層の下に、メール作成に必要な機能がある
-		const edit_nodes = [];
-		for (const node of form_nodes) {
-			edit_nodes.push(node.parentNode);
-		}
+// 		// 見つけたformノードの親階層の下に、メール作成に必要な機能がある
+// 		const edit_nodes = [];
+// 		for (const node of form_nodes) {
+// 			edit_nodes.push(node.parentNode);
+// 		}
 
-		return edit_nodes;
-	},
+// 		return edit_nodes;
+// 	},
 
-	// 確認ボタンがすでにないか探す
-	findConfirmButton(node) {
-		const query = 'div[' + this.CONFIRM_BUTTON_ATTR + ']';
-		return node.querySelector(query);
-	},
+// 	// 確認ボタンがすでにないか探す
+// 	findConfirmButton(node) {
+// 		const query = 'div[' + this.CONFIRM_BUTTON_ATTR + ']';
+// 		return node.querySelector(query);
+// 	},
 
-	// 送信ボタンを探す
-	findSendButton(node) {
-		//送信ボタン検索
-		// 言語によって(Ctrl + Enter)だったり(Ctrl-Enter)だったりするので
-		// Enterが含まれているものを探す
-		const d = node.querySelector('div[aria-label*="Enter)"]');
-		return d;
-	},
+// 	// 送信ボタンを探す
+// 	findSendButton(node) {
+// 		//送信ボタン検索
+// 		// 言語によって(Ctrl + Enter)だったり(Ctrl-Enter)だったりするので
+// 		// Enterが含まれているものを探す
+// 		const d = node.querySelector('div[aria-label*="Enter)"]');
+// 		return d;
+// 	},
 
-	// 送信ボタンを非表示にする
-	hideSendButton(send_button, id) {
-		//親要素を非表示にする
-		const parent_send_button = send_button.parentNode;
-		parent_send_button.style.display = "none";
-		parent_send_button.setAttribute(this.SEND_BUTTON_ATTR,id);
+// 	// 送信ボタンを非表示にする
+// 	hideSendButton(send_button, id) {
+// 		//親要素を非表示にする
+// 		const parent_send_button = send_button.parentNode;
+// 		parent_send_button.style.display = "none";
+// 		parent_send_button.setAttribute(this.SEND_BUTTON_ATTR,id);
 		
-		//送信＆アーカイブ設定になっている場合は、親の兄弟要素も送信ボタンなので、非表示
-		const next_element = parent_send_button.nextElementSibling;
-		if (next_element) {
-			next_element.style.display = "none";
-			next_element.setAttribute(this.SEND_BUTTON_ATTR,id);
-		}
-	},
+// 		//送信＆アーカイブ設定になっている場合は、親の兄弟要素も送信ボタンなので、非表示
+// 		const next_element = parent_send_button.nextElementSibling;
+// 		if (next_element) {
+// 			next_element.style.display = "none";
+// 			next_element.setAttribute(this.SEND_BUTTON_ATTR,id);
+// 		}
+// 	},
 
-	// 送信ボタン表示&色を変える
-	displaySendButton(id) {
-		const send_buttons = document.querySelectorAll(`div[${this.SEND_BUTTON_ATTR}="${id}"]`);
-		if (!send_buttons || send_buttons.length==0) {
-			alert('送信ボタンを再表示出来ませんでした。\nGMailSendAddressChecker拡張を無効にしてみてください。');
-		} else {
-			send_buttons.forEach((element) => {
-				element.style.display = "";
-				element.childNodes.forEach((e) => {
-					Object.assign(e.style, this.SEND_BUTTON_STYLE);
-					// e.style.backgroundColor = this.SEND_BUTTON_BACKGROUND_COLOR;
-					// e.style.color = this.SEND_BUTTON_COLOR;
-				});
-			});
-		}
-	},
+// 	// 送信ボタン表示&色を変える
+// 	displaySendButton(id) {
+// 		const send_buttons = document.querySelectorAll(`div[${this.SEND_BUTTON_ATTR}="${id}"]`);
+// 		if (!send_buttons || send_buttons.length==0) {
+// 			alert('送信ボタンを再表示出来ませんでした。\nGMailSendAddressChecker拡張を無効にしてみてください。');
+// 		} else {
+// 			send_buttons.forEach((element) => {
+// 				element.style.display = "";
+// 				element.childNodes.forEach((e) => {
+// 					Object.assign(e.style, this.SEND_BUTTON_STYLE);
+// 					// e.style.backgroundColor = this.SEND_BUTTON_BACKGROUND_COLOR;
+// 					// e.style.color = this.SEND_BUTTON_COLOR;
+// 				});
+// 			});
+// 		}
+// 	},
 
-	// 確認ボタンを追加する
-	insertConfirmButton(send_button, id) {
-		const confirm_button = this.createConfirmButton(send_button, id);
+// 	// 確認ボタンを追加する
+// 	insertConfirmButton(send_button, id) {
+// 		const confirm_button = this.createConfirmButton(send_button, id);
 
-		//送信ボタンの親要素のさらに親要素に挿入
-		const parent_send = send_button.parentNode;
-		parent_send.parentNode.append(confirm_button);
-	},
+// 		//送信ボタンの親要素のさらに親要素に挿入
+// 		const parent_send = send_button.parentNode;
+// 		parent_send.parentNode.append(confirm_button);
+// 	},
 
-	// 確認ボタン削除
-	removeConfirmButton(id) {
-		const element = document.querySelector(`div[${this.CONFIRM_BUTTON_ATTR}="${id}"]`);
-		if (element) {
-			element.parentNode.removeChild(element); 
-		}
-	},
+// 	// 確認ボタン削除
+// 	removeConfirmButton(id) {
+// 		const element = document.querySelector(`div[${this.CONFIRM_BUTTON_ATTR}="${id}"]`);
+// 		if (element) {
+// 			element.parentNode.removeChild(element); 
+// 		}
+// 	},
 
 
 
-	//-------------------------------------------------------
-	// 多言語対応
-	//-------------------------------------------------------
+// 	//-------------------------------------------------------
+// 	// 多言語対応
+// 	//-------------------------------------------------------
 	  
-	//表示文字取得
-	getDisplayText(type) {
-		if (!this.lang)
-			this.lang = 'en';
-		if (!this.display_text_tbl[this.lang])
-			this.lang = 'en';
+// 	//表示文字取得
+// 	getDisplayText(type) {
+// 		if (!this.lang)
+// 			this.lang = 'en';
+// 		if (!this.display_text_tbl[this.lang])
+// 			this.lang = 'en';
 		
-		let text = this.display_text_tbl[this.lang][type];
-		if (!text) {
-			text = this.display_text_tbl['en'][type];
-		}
+// 		let text = this.display_text_tbl[this.lang][type];
+// 		if (!text) {
+// 			text = this.display_text_tbl['en'][type];
+// 		}
 
-		return text;
-	},
+// 		return text;
+// 	},
 
 
 
-	//-------------------------------------------------------
-	// 確認ボタンの生成
-	//-------------------------------------------------------
-	createConfirmButton(send_button, id) {
+// 	//-------------------------------------------------------
+// 	// 確認ボタンの生成
+// 	//-------------------------------------------------------
+// 	createConfirmButton(send_button, id) {
 		
-		// 送信ボタンのクローンから作成
-		let confirm_button = send_button.cloneNode();
+// 		// 送信ボタンのクローンから作成
+// 		let confirm_button = send_button.cloneNode();
 
-		confirm_button.setAttribute(this.CONFIRM_BUTTON_ATTR,id);
-		confirm_button.removeAttribute('id');
-		confirm_button.setAttribute("aria-label", this.getDisplayText("confirm"));
-		confirm_button.setAttribute("data-tooltip", this.getDisplayText("confirm"));
-		confirm_button.innerText = this.getDisplayText("confirm");
-		Object.assign(confirm_button.style, this.CONFIRM_BUTTON_STYLE);
+// 		confirm_button.setAttribute(this.CONFIRM_BUTTON_ATTR,id);
+// 		confirm_button.removeAttribute('id');
+// 		confirm_button.setAttribute("aria-label", this.getDisplayText("confirm"));
+// 		confirm_button.setAttribute("data-tooltip", this.getDisplayText("confirm"));
+// 		confirm_button.innerText = this.getDisplayText("confirm");
+// 		Object.assign(confirm_button.style, this.CONFIRM_BUTTON_STYLE);
 
-		confirm_button.onclick = (event) => {
-			console.log(`No.${id} の確認ボタンが押されました`);
-			// チェック用モーダルウィンドウ
-			const check_modal_window = this.createCheckModalWindow(id);
-			document.body.appendChild(check_modal_window);
-		};
+// 		confirm_button.onclick = (event) => {
+// 			console.log(`No.${id} の確認ボタンが押されました`);
+// 			// チェック用モーダルウィンドウ
+// 			const check_modal_window = this.createCheckModalWindow(id);
+// 			document.body.appendChild(check_modal_window);
+// 		};
 
-		return confirm_button;
-	},
-
-
+// 		return confirm_button;
+// 	},
 
 
-	//-------------------------------------------------------
-	// チェック用モーダルウィンドウの生成
-	//-------------------------------------------------------
-	createCheckModalWindow(id) {
 
-		window_element.appendChild(this.crateCheckOkCancelButton(id));		// OK,CANCELボタン
+
+// 	//-------------------------------------------------------
+// 	// チェック用モーダルウィンドウの生成
+// 	//-------------------------------------------------------
+// 	createCheckModalWindow(id) {
+
+// 		window_element.appendChild(this.crateCheckOkCancelButton(id));		// OK,CANCELボタン
 		
-		element.id = this.CHECK_WINDOW_ID;
+// 		element.id = this.CHECK_WINDOW_ID;
 
-		//チェックボックスのイベント
-		let btnOK = element.querySelector(`#${this.CHECK_OK_BUTTON_ID}`);
-		const chbx = element.querySelectorAll('input[type=checkbox]');
-		let chbxLen = chbx.length;
-		for (let i = 0; i < chbxLen; i++) {
-			chbx[i].onclick = function () {
-				if (this.checked) {
-					chbxLen--;
-				} else {
-					chbxLen++;
-				}
-				if (chbxLen <= 0) {
-					btnOK.style.backgroundImage = '-webkit-linear-gradient(top,#D44638,#D44638)';
-					btnOK.style.color = '#fff';
-					btnOK.disabled = false;
-					btnOK.style.opacity = 1.0;
-				} else {
-					btnOK.style.backgroundImage = '';
-					btnOK.disabled = true;
-					btnOK.style.opacity = 0.5;
-				}
-			}
-		}
-		btnOK.style.backgroundImage = '';
-		btnOK.disabled = true;
-		btnOK.style.opacity = 0.5;
+// 		//チェックボックスのイベント
+// 		let btnOK = element.querySelector(`#${this.CHECK_OK_BUTTON_ID}`);
+// 		const chbx = element.querySelectorAll('input[type=checkbox]');
+// 		let chbxLen = chbx.length;
+// 		for (let i = 0; i < chbxLen; i++) {
+// 			chbx[i].onclick = function () {
+// 				if (this.checked) {
+// 					chbxLen--;
+// 				} else {
+// 					chbxLen++;
+// 				}
+// 				if (chbxLen <= 0) {
+// 					btnOK.style.backgroundImage = '-webkit-linear-gradient(top,#D44638,#D44638)';
+// 					btnOK.style.color = '#fff';
+// 					btnOK.disabled = false;
+// 					btnOK.style.opacity = 1.0;
+// 				} else {
+// 					btnOK.style.backgroundImage = '';
+// 					btnOK.disabled = true;
+// 					btnOK.style.opacity = 0.5;
+// 				}
+// 			}
+// 		}
+// 		btnOK.style.backgroundImage = '';
+// 		btnOK.disabled = true;
+// 		btnOK.style.opacity = 0.5;
 
-		return element;
-	},
+// 		return element;
+// 	},
 
-	// OK,CANCELボタン
-	crateCheckOkCancelButton(id) {
-		let ok = document.createElement("input");
-		ok.id = this.CHECK_OK_BUTTON_ID;
-		ok.type="button";
-		ok.value="Confirm";
-		ok.onclick = () => {
-			this.removeCheckModalWindow();
-			this.displaySendButton(id);	  // 送信ボタン表示
-			this.removeConfirmButton(id); // 確認ボタン削除
-		}
+// 	// OK,CANCELボタン
+// 	crateCheckOkCancelButton(id) {
+// 		let ok = document.createElement("input");
+// 		ok.id = this.CHECK_OK_BUTTON_ID;
+// 		ok.type="button";
+// 		ok.value="Confirm";
+// 		ok.onclick = () => {
+// 			this.removeCheckModalWindow();
+// 			this.displaySendButton(id);	  // 送信ボタン表示
+// 			this.removeConfirmButton(id); // 確認ボタン削除
+// 		}
 
-		let cancel = document.createElement("input");
-		cancel.type="button";
-		cancel.value="Cancel";
-		cancel.onclick = () => {
-			this.removeCheckModalWindow();
-		}
+// 		let cancel = document.createElement("input");
+// 		cancel.type="button";
+// 		cancel.value="Cancel";
+// 		cancel.onclick = () => {
+// 			this.removeCheckModalWindow();
+// 		}
 
-		let element = document.createElement("div");
-		element.className = "gmsac-button-area";
-		element.appendChild(ok);
-		element.appendChild(cancel);
+// 		let element = document.createElement("div");
+// 		element.className = "gmsac-button-area";
+// 		element.appendChild(ok);
+// 		element.appendChild(cancel);
 
-		return element;
-	},
-
-
-	// from取得
-	getFrom(edit_node) {
-		let from = edit_node.querySelectorAll('input[name=from]')[0].value;
-		if (from == "") {
-			//アカウントが１つしか設定されていないとfromに値がはいらないので、タイトルを使う。これでいいのかは怪しい
-			console.log(document.title);
-			from = document.title.match(/- ([a-zA-z0-9\.-]+@[a-zA-z0-9\.-]+) -/);
-			if (from != null)
-				from = from[1];
-		}
-		return from;
-	},
-
-	// ドメインのみ抽出
-	getDomain(address) {
-		const domain = address.match(/[a-zA-z0-9\.-]+@([a-zA-z0-9\.-]+)/)
-
-		if (domain == null)
-			return "";
-
-		return domain[1];
-	},
-
-	//アドレスリスト作成
-	makeAddressList(addresses, whiteDomain) {
-		let list = "";
-
-		for (let i = 0, addressCount = addresses.length; i < addressCount; i++) {
-			var addressValue = addresses[i].value;
-			if (addressValue) {
-				let text = addressValue.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-				if (whiteDomain != "") {
-					if (this.getDomain(addressValue) == whiteDomain)
-						text = '<font color="#00f">' + text + '</font>';
-					else
-						text = '<font color="#f00">' + text + '</font>';
-				}
-
-				list = list + this.createCheckbox(text) + '<br/>';
-			}
-		}
-
-		return list;
-	},
+// 		return element;
+// 	},
 
 
+// 	// from取得
+// 	getFrom(edit_node) {
+// 		let from = edit_node.querySelectorAll('input[name=from]')[0].value;
+// 		if (from == "") {
+// 			//アカウントが１つしか設定されていないとfromに値がはいらないので、タイトルを使う。これでいいのかは怪しい
+// 			console.log(document.title);
+// 			from = document.title.match(/- ([a-zA-z0-9\.-]+@[a-zA-z0-9\.-]+) -/);
+// 			if (from != null)
+// 				from = from[1];
+// 		}
+// 		return from;
+// 	},
 
-};
+// 	// ドメインのみ抽出
+// 	getDomain(address) {
+// 		const domain = address.match(/[a-zA-z0-9\.-]+@([a-zA-z0-9\.-]+)/)
+
+// 		if (domain == null)
+// 			return "";
+
+// 		return domain[1];
+// 	},
+
+// 	//アドレスリスト作成
+// 	makeAddressList(addresses, whiteDomain) {
+// 		let list = "";
+
+// 		for (let i = 0, addressCount = addresses.length; i < addressCount; i++) {
+// 			var addressValue = addresses[i].value;
+// 			if (addressValue) {
+// 				let text = addressValue.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+// 				if (whiteDomain != "") {
+// 					if (this.getDomain(addressValue) == whiteDomain)
+// 						text = '<font color="#00f">' + text + '</font>';
+// 					else
+// 						text = '<font color="#f00">' + text + '</font>';
+// 				}
+
+// 				list = list + this.createCheckbox(text) + '<br/>';
+// 			}
+// 		}
+
+// 		return list;
+// 	},
+
+
+
+// };
 
 
 // 起動
-console.log("GGmailSendChecker init");
-GmailSendChecker.init();
+// console.log("GGmailSendChecker init");
+// GmailSendChecker.init();
+
